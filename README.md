@@ -1,11 +1,3 @@
-<p align="center">
-  <a href="https://redis.io/">
-    <img src="https://www.clipartmax.com/png/small/201-2018012_redis-logo-black-and-white-redis-cache.png" alt="Redis Logo Black And White - Redis Cache @clipartmax.com">
-  </a>
-  <a href="https://getstisla.com">
-    <img src="https://avatars2.githubusercontent.com/u/45754626?s=75&v=4" alt="Stisla logo" width="75" height="75">
-  </a>
-</p>
 
 <h1 align="center">Realtime Chat using Redis and <a href="https://redis.io/">
     Redis
