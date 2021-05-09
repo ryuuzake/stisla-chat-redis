@@ -48,21 +48,6 @@ Read the [Getting started page](https://getstisla.com/docs) for information on t
 -  
 - 
 
-## Roadmap
-You can find the Stisla road map here: [Stisla Roadmap](https://trello.com/b/M8TMnehE/stisla-roadmap)
-
-
-## Integrates
-- [Rails](https://github.com/SunDi3yansyah/stisla-rails)
-- [CodeIgniter](https://github.com/KhidirDotID/stisla-codeigniter)
-- [Laravel](https://github.com/rehmatworks/stisla-laravel)
-- [Laravel UI Preset](https://github.com/poteto-dev/laravel-ui-stisla)
-- [Jekyll](https://github.com/SunDi3yansyah/stisla-jekyll)
-- [YII2](https://github.com/piantgrunger/yii2-stisla)
-
-- Django (let's contribute)
-- and more...
-
 ## License
 Stisla is under the [MIT License](LICENSE)
 
