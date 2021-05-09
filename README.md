@@ -4,7 +4,11 @@
   </a>
 </p>
 
-<h1 align="center">Realtime Chat using Redis and <a href="https://getstisla.com">
+<h1 align="center">Realtime Chat using Redis and <a href="https://redis.io/">
+    Redis
+  </a>
+  and 
+  <a href="https://getstisla.com">
     Stisla
   </a>
   Template</h1>
