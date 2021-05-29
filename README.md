@@ -40,8 +40,14 @@ Several quick start options are available:
 Read the [Getting started page](https://getstisla.com/docs) for information on the UI contents, templates and examples, and more.
 
 ## Redis Guide
--  
-- 
+
+Redis Stream using Python FastAPI
+
+Code from [https://github.com/ryuuzake/fastapi-redis-streams-chat-app](https://github.com/ryuuzake/fastapi-redis-streams-chat-app)
+
+To start the server, use docker-compose
+
+-  `docker-compose up -d --build`
 
 ## License
 Stisla is under the [MIT License](LICENSE)

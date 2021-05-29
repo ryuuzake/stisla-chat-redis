@@ -1,0 +1,12 @@
+version: '3.4'
+services:
+  chat:
+    build: .
+    ports:
+      - "9080:9080"
+    volumes:
+      - .:/code
+  redis:
+    image: "redis:6.2.3-alpine"
+    ports:
+      - 6379:6379
