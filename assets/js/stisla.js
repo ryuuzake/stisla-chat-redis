@@ -218,10 +218,11 @@
   $.chatCtrl = function(element, chat) {
     var chat = $.extend({
       position: 'chat-right',
+      name: '',
       text: '',
       time: moment(new Date().toISOString()).format('hh:mm'),
       picture: '',
-      type: 'text', // or typing
+      type: 'text', // or typing or announcement
       timeout: 0,
       onShow: function() {}
     }, chat);
@@ -230,6 +231,7 @@
         element = '<div class="chat-item '+chat.position+'" style="display:none">' +
                   '<img src="'+chat.picture+'">' +
                   '<div class="chat-details">' +
+                  (chat.position === "chat-left" ? `<h6>${chat.name}</h6>` : '') +
                   '<div class="chat-text">'+chat.text+'</div>' +
                   '<div class="chat-time">'+chat.time+'</div>' +
                   '</div>' +
@@ -239,11 +241,20 @@
                   '<div class="chat-details">' +
                   '<div class="chat-text"></div>' +
                   '</div>' +
+                  '</div>',
+        announcement_element = '<div class="chat-item">' +
+                  '<p class="chat-text" style="text-align: center; margin-bottom: 0">' +
+                  chat.text +
+                  '</p>' +
                   '</div>';
 
-      var append_element = element;
+      var append_element;
       if(chat.type == 'typing') {
         append_element = typing_element;
+      } else if (chat.type === 'announcement') {
+        append_element = announcement_element;
+      } else {
+        append_element = element;
       }
 
       if(chat.timeout > 0) {

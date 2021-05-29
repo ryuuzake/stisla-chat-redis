@@ -1,120 +1,130 @@
 "use strict";
 
-var chats = [
-  {
-    text: 'Hi, dude!',
-    position: 'left'
-  },
-  {
-    text: 'Wat?',
-    position: 'right'
-  },
-  {
-    text: 'You wanna know?',
-    position: 'left'
-  },
-  {
-    text: 'Wat?!',
-    position: 'right'
-  },
-  {
-    typing: true,
-    position: 'left'
+// Global WebSocket
+let ws = null;
+
+function chooseRoom(room) {
+  cleanRoom(room);
+  checkWSStateForClose();
+
+  let username = prompt("Please enter your name", "");
+  username = username ?? '';
+  const room_info = new URLSearchParams({ username, room }).toString();
+
+  let ws_protocol = "wss://";
+  if (window.location.protocol == "http:") {
+    ws_protocol = "ws://";
   }
-];
-for(var i = 0; i < chats.length; i++) {
-  var type = 'text';
-  if(chats[i].typing != undefined) type = 'typing';
-  $.chatCtrl('#mychatbox', {
-    text: (chats[i].text != undefined ? chats[i].text : ''),
-    picture: (chats[i].position == 'left' ? '../assets/img/avatar/avatar-1.png' : '../assets/img/avatar/avatar-2.png'),
-    position: 'chat-'+chats[i].position,
-    type: type
-  });
+
+  ws = new WebSocket(
+    `${ws_protocol}${window.location.host}/ws?${room_info}`
+  );
+
+  addWSListener(username);
 }
+
+function cleanRoom(room) {
+  var roomName = room.split(':');
+  // room -> Room
+  roomName[0] = `${roomName[0][0].toUpperCase()}${roomName[0].slice(1)}`;
+  roomName = roomName.join(" ");
+  log(`Clean Room ${roomName}`);
+  $("#chat-room-name").text(roomName);
+  $("#chat-content").empty();
+}
+
+function checkWSStateForClose() {
+  // Check State and close if still have some lingering connection
+  if (ws != null && ws.readyState == 1) {
+    ws.close();
+  }
+}
+
+function addWSListener(username) {
+  // Listen for the connection open event then call the sendMessage function
+  ws.onopen = function (e) {
+    log(e);
+    log("Connected");
+  };
+
+  // Listen for the close connection event
+  ws.onclose = function (e) {
+    log(e);
+    log("Disconnected " + e.reason);
+  };
+
+  // Listen for connection errors
+  ws.onerror = function (e) {
+    log("Error " + e.reason);
+  };
+
+  ws.onmessage = function(e) {
+    log(e);
+    let data = JSON.parse(e.data);
+
+    $.chatCtrl("#mychatbox", {
+      text: data.msg,
+      name: data.uname,
+      type: data.type,
+      picture:
+        data.uname !== username
+          ? "https://ui-avatars.com/api/?name=" + data.uname
+          : "../assets/img/avatar/avatar-1.png",
+      position: data.uname !== username ? "chat-left" : "chat-right",
+    });
+
+  }
+}
+
+function log(msg) {
+  console.log(msg);
+}
+
+function urlToRoomMapping(url) {
+  const url_length = url.length - 1;
+  // Custom Splice
+  // e.g. #room1 -> room:1
+  return `${url.slice(1, url_length)}:${url.slice(url_length)}`;
+}
+
+$(document).ready(function () {
+  alert("Please Choose a Room!");
+});
 
 $("#chat-form").submit(function() {
   var me = $(this);
 
-  if(me.find('input').val().trim().length > 0) {
-    $.chatCtrl('#mychatbox', {
-      text: me.find('input').val(),
-      picture: '../assets/img/avatar/avatar-2.png',
-    });
-    me.find('input').val('');
+  if(ws != null && me.find('input').val().trim().length > 0) {
+    if (ws.readyState == 3) {
+      log("Reconnect");
+      chooseRoom(urlToRoomMapping($(location).attr("hash")));
+    }
+    if (ws.readyState == 1) {
+      var msg = me.find("input").val();
+      let data = { msg: msg };
+      ws.send(JSON.stringify(data));
+      me.find("input").val("");
+      log("Message sent");
+    }
+    if (ws == null && msg.length) {
+      log("Connection to room is required");
+    }
+    if (!msg.length) {
+      log("Empty message");
+    }
   }
   return false;
 });
 
-var chats = [
-  {
-    text: 'Wake up!',
-    position: 'left'
-  },
-  {
-    text: 'Yes, already',
-    position: 'right'
-  },
-  {
-    text: 'Grab a brush and put a little make-up',
-    position: 'left'
-  },
-  {
-    text: 'What do you mean?',
-    position: 'right'
-  },
-  {
-    text: 'Hide the scars to fade away the shake-up',
-    position: 'left'
-  },
-  {
-    text: 'WTF?!',
-    position: 'right'
-  },
-  {
-    text: 'Why\'d you leave the keys upon the table?',
-    position: 'left'
-  },
-  {
-    text: '-__________________-',
-    position: 'right'
-  },
-  {
-    text: 'Here you go create another fable',
-    position: 'left'
-  },
-  {
-    text: 'You wanted do!',
-    position: 'right'
-  },
-  {
-    text: 'FXCK!',
-    position: 'right'
-  },
-  {
-    text: '<i>You have blocked Ryan</i>',
-    position: 'right'
-  },
-];
-for(var i = 0; i < chats.length; i++) {
-  var type = 'text';
-  if(chats[i].typing != undefined) type = 'typing';
-  $.chatCtrl('#mychatbox2', {
-    text: (chats[i].text != undefined ? chats[i].text : ''),
-    picture: (chats[i].position == 'left' ? '../assets/img/avatar/avatar-5.png' : '../assets/img/avatar/avatar-2.png'),
-    position: 'chat-'+chats[i].position,
-    type: type
-  });
-}
-$("#chat-form2").submit(function() {
-  var me = $(this);
+$("#room1").click(function () {
+  log("room 1 clicked");
+  chooseRoom("room:1");
+});
 
-  if(me.find('input').val().trim().length > 0) {
-    $.chatCtrl('#mychatbox2', {
-      text: me.find('input').val(),
-      picture: '../assets/img/avatar/avatar-2.png',
-    });
-    me.find('input').val('');
-  }
-  return false;
+$("#room2").click(function () {
+  chooseRoom("room:2");
+});
+
+$("#room3").click(function () {
+  chooseRoom("room:3");
 });
